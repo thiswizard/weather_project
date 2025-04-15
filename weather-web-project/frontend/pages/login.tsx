@@ -25,7 +25,6 @@ const Login = () => { // 함수형 컴포넌트
           margin="normal"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          
         />
         <TextField
           label="비밀번호"
@@ -36,7 +35,7 @@ const Login = () => { // 함수형 컴포넌트
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button type="submit" variant="contained" color="primary" fullWidth>
+        <Button  variant="contained" color="primary" fullWidth>
           로그인
         </Button>
         <Typography variant='h5' sx={{mt:3}}>
