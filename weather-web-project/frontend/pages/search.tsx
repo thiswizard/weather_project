@@ -1,17 +1,15 @@
-// pages/search.tsx
-
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Container, CircularProgress } from '@mui/material';
 
 // 도시명 → 기상청 격자 좌표 매핑
-const cityToGrid: Record<string, { nx: number, ny: number }> = {
-  '서울': { nx: 60, ny: 127 },
-  '부산': { nx: 98, ny: 76 },
-  '대구': { nx: 89, ny: 90 },
-  '인천': { nx: 55, ny: 124 },
-  '광주': { nx: 58, ny: 74 },
-  '대전': { nx: 67, ny: 100 },
-  '울산': { nx: 102, ny: 84 },
+const cityToGrid: Record<string, { nx: number; ny: number }> = {
+  서울: { nx: 60, ny: 127 },
+  부산: { nx: 98, ny: 76 },
+  대구: { nx: 89, ny: 90 },
+  인천: { nx: 55, ny: 124 },
+  광주: { nx: 58, ny: 74 },
+  대전: { nx: 67, ny: 100 },
+  울산: { nx: 102, ny: 84 },
 };
 
 // 기상청 API 호출 함수
@@ -20,7 +18,7 @@ const fetchWeatherData = async (city: string) => {
   if (!location) throw new Error('지원하지 않는 도시입니다.');
 
   const { nx, ny } = location;
-  const serviceKey = 'UIFz6u5b8bJPQCEe98WRZgMNq4Fav1AbgmNnT7jCdsleZcPDqIiD646wbc1iJJ6Zdz0Vw1xmPcGjTMRLL9kT3Q%3D%3D';
+  const serviceKey = process.env.NEXT_PUBLIC_KMA_API_KEY;
 
   const now = new Date();
   const baseDate = now.toISOString().slice(0, 10).replace(/-/g, '');
@@ -30,6 +28,8 @@ const fetchWeatherData = async (city: string) => {
   const url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=${serviceKey}&numOfRows=10&pageNo=1&base_date=${baseDate}&base_time=${baseTime}&nx=${nx}&ny=${ny}&dataType=JSON`;
 
   const response = await fetch(url);
+  if (!response.ok) throw new Error('API 요청 실패');
+
   const json = await response.json();
   const items = json.response.body.items.item;
 
@@ -54,14 +54,18 @@ const Search = () => {
   const [error, setError] = useState('');
 
   const handleSearch = async () => {
-    if (!city) return;
+    if (!city) {
+      setError('도시 이름을 입력해주세요.');
+      return;
+    }
+
     setLoading(true);
     setError('');
     try {
       const data = await fetchWeatherData(city.trim());
       setWeatherData(data);
-    } catch (err: any) {
-      setError(err.message || '날씨 정보를 가져오는 데 실패했습니다.');
+    } catch (err) {
+      setError((err as Error).message || '날씨 정보를 가져오는 데 실패했습니다.');
     } finally {
       setLoading(false);
     }
@@ -69,7 +73,9 @@ const Search = () => {
 
   return (
     <Container maxWidth="xs" sx={{ textAlign: 'center' }}>
-      <Typography variant="h4" gutterBottom>날씨 검색</Typography>
+      <Typography variant="h4" gutterBottom>
+        날씨 검색
+      </Typography>
       <TextField
         label="도시 이름 (예: 서울)"
         variant="outlined"
@@ -83,8 +89,12 @@ const Search = () => {
       </Button>
 
       {loading && <CircularProgress sx={{ marginTop: 2 }} />}
-      {error && <Typography color="error" sx={{ marginTop: 2 }}>{error}</Typography>}
-      
+      {error && (
+        <Typography color="error" sx={{ marginTop: 2 }}>
+          {error}
+        </Typography>
+      )}
+
       {weatherData && (
         <div style={{ marginTop: 20 }}>
           <Typography variant="h6">{weatherData.city} 현재 날씨</Typography>
