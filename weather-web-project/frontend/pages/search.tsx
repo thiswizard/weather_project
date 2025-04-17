@@ -18,7 +18,7 @@ const fetchWeatherData = async (city: string) => {
   if (!location) throw new Error('지원하지 않는 도시입니다.');
 
   const { nx, ny } = location;
-  const serviceKey = process.env.NEXT_PUBLIC_KMA_API_KEY;
+  const serviceKey = "UIFz6u5b8bJPQCEe98WRZgMNq4Fav1AbgmNnT7jCdsleZcPDqIiD646wbc1iJJ6Zdz0Vw1xmPcGjTMRLL9kT3Q%3D%3D"
 
   const now = new Date();
   const baseDate = now.toISOString().slice(0, 10).replace(/-/g, '');
@@ -72,6 +72,7 @@ const Search = () => {
   };
 
   return (
+    
     <Container maxWidth="xs" sx={{ textAlign: 'center' }}>
       <Typography variant="h4" gutterBottom>
         날씨 검색
@@ -107,6 +108,7 @@ const Search = () => {
         </div>
       )}
     </Container>
+    
   );
 };
 
