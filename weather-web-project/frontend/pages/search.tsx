@@ -12,13 +12,22 @@ const cityToGrid: Record<string, { nx: number; ny: number }> = {
   울산: { nx: 102, ny: 84 },
 };
 
+// 날씨 데이터를 담을 타입 정의
+interface WeatherData {
+  city: string;
+  temperature: string;
+  humidity: string;
+  wind: string;
+  precipitation: string;
+}
+
 // 기상청 API 호출 함수
-const fetchWeatherData = async (city: string) => {
+const fetchWeatherData = async (city: string): Promise<WeatherData> => {
   const location = cityToGrid[city];
   if (!location) throw new Error('지원하지 않는 도시입니다.');
 
   const { nx, ny } = location;
-  const serviceKey = "UIFz6u5b8bJPQCEe98WRZgMNq4Fav1AbgmNnT7jCdsleZcPDqIiD646wbc1iJJ6Zdz0Vw1xmPcGjTMRLL9kT3Q%3D%3D"
+  const serviceKey = "UIFz6u5b8bJPQCEe98WRZgMNq4Fav1AbgmNnT7jCdsleZcPDqIiD646wbc1iJJ6Zdz0Vw1xmPcGjTMRLL9kT3Q%3D%3D";
 
   const now = new Date();
   const baseDate = now.toISOString().slice(0, 10).replace(/-/g, '');
@@ -49,7 +58,7 @@ const fetchWeatherData = async (city: string) => {
 
 const Search = () => {
   const [city, setCity] = useState('');
-  const [weatherData, setWeatherData] = useState<any>(null);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -72,7 +81,6 @@ const Search = () => {
   };
 
   return (
-    
     <Container maxWidth="xs" sx={{ textAlign: 'center' }}>
       <Typography variant="h4" gutterBottom>
         날씨 검색
@@ -108,7 +116,6 @@ const Search = () => {
         </div>
       )}
     </Container>
-    
   );
 };
 
